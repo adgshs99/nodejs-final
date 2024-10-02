@@ -1,0 +1,74 @@
+const express = require('express');
+const app = express();
+const bodyParser = require('body-parser');
+const path = require('path');
+
+app.use(express.static(path.join(__dirname, 'public')));
+app.use(bodyParser.json());
+
+let checkpoints = [
+    { id: 1, name: "כניסה ראשית" },
+    { id: 2, name: "מחסן" }
+];
+
+let visits = [];
+
+app.post('/checkpointAdd', (req, res) => {
+    const checkpoint = {
+        id: checkpoints.length + 1,
+        name: req.body.name
+    };
+    checkpoints.push(checkpoint);
+    res.status(200).json(checkpoint);
+});
+
+app.get('/checkpoints', (req, res) => {
+    res.status(200).json(checkpoints);
+});
+
+app.put('/checkpointEdit/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const checkpoint = checkpoints.find(chk => chk.id === id);
+    if (checkpoint) {
+        checkpoint.name = req.body.name;
+        res.status(200).json(checkpoint);
+    } else {
+        res.status(404).json({ message: "נקודה לא נמצאה" });
+    }
+});
+
+app.delete('/checkpointDelete/:id', (req, res) => {
+    const id = parseInt(req.params.id);
+    const index = checkpoints.findIndex(chk => chk.id === id);
+    if (index !== -1) {
+        checkpoints.splice(index, 1);
+        res.status(200).json({ message: "הנקודה נמחקה בהצלחה" });
+    } else {
+        res.status(404).json({ message: "נקודה לא נמצאה" });
+    }
+});
+
+app.post('/visitUpdate', (req, res) => {
+    const checkpointId = parseInt(req.body.checkpointId);
+    const time = new Date().getTime();
+
+    let visit = visits.find(v => v.checkpointId === checkpointId);
+
+    if (visit) {
+        visit.time = time;
+    } else {
+        visit = { checkpointId, time };
+        visits.push(visit);
+    }
+
+    res.status(200).json({ message: 'זמן הביקור עודכן', visit });
+});
+
+app.get('/visits', (req, res) => {
+    res.status(200).json(visits);
+});
+
+const port = 4325;
+app.listen(port, () => {
+    console.log(`השרת פועל על http://localhost:${port}`);
+});
