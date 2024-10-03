@@ -9,14 +9,14 @@
 <body>
     <h1>ניהול נקודות</h1>
 
-    <!-- טופס לניהול נקודות -->
+    
     <form id="checkpointForm">
         <input type="text" id="checkpointName" placeholder="שם נקודה">
         <input type="hidden" id="checkpointId">
         <button type="button" onclick="addOrEditCheckpoint()">שמור נקודה</button>
     </form>
 
-    <!-- רשימת הנקודות -->
+  
     <h2>רשימת נקודות:</h2>
     <ul id="checkpointsList"></ul>
 
