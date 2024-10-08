@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <title>ניהול נקודות</title>
+</head>
+
+<body>
+    <h1>ניהול נקודות</h1>
+
+   
+    <form id="checkpointForm">
+        <input type="text" id="checkpointName" placeholder="שם נקודה">
+        <input type="hidden" id="checkpointId">
+        <button type="button" onclick="addOrEditCheckpoint()">שמור נקודה</button>
+    </form>
+
+   
+    <h2>רשימת נקודות:</h2>
+    <ul id="checkpointsList"></ul>
+
+    <script>
+        async function points() {
+            const response = await fetch('/checkpoints');
+            const checkpoints = await response.json();
+            const list = document.getElementById('checkpointsList');
+            list.innerHTML = '';
+            checkpoints.forEach(checkpoint => {
+                const li = document.createElement('li');
+                li.innerHTML = `${checkpoint.name} 
+                    <button onclick="editCheckpoint(${checkpoint.id})">ערוך</button>
+                    <button onclick="deleteCheckpoint(${checkpoint.id})">מחק</button>`;
+                list.appendChild(li);
+            });
+        }
+
+        async function addOrEditCheckpoint() {
+            const name = document.getElementById('checkpointName').value;
+            const id = document.getElementById('checkpointId').value;
+
+            if (!name) return;
+
+            if (id) {
+                await fetch(`/checkpointEdit/${id}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+            } else {
+                await fetch('/checkpointAdd', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ name })
+                });
+            }
+
+            document.getElementById('checkpointName').value = '';
+            document.getElementById('checkpointId').value = '';
+            points();
+        }
+
+ async function editCheckpoint(id) {
+            const response = await fetch('/checkpoints');
+            const checkpoints = await response.json();
+            const checkpoint = checkpoints.find(chk => chk.id === id);
+            document.getElementById('checkpointName').value = checkpoint.name;
+            document.getElementById('checkpointId').value = checkpoint.id;
+        }
+ </script>
+</body>
+
+</html>
