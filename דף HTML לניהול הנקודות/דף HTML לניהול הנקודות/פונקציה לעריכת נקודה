@@ -13,7 +13,7 @@
     <form id="checkpointForm">
         <input type="text" id="checkpointName" placeholder="שם נקודה">
         <input type="hidden" id="checkpointId">
-        <button type="button" onclick="addOrEditCheckpoint()">שמור נקודה</button>
+        <button type="button">שמור נקודה</button>
     </form>
 
    
