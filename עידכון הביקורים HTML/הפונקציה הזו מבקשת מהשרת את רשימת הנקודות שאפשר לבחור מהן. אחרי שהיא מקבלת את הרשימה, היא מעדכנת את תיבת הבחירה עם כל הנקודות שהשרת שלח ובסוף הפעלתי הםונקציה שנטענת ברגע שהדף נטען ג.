@@ -13,7 +13,7 @@
     <form>
         <label for="pointSelect">בחר נקודה:</label>
         <select id="pointSelect"></select>
-        <button type="button" onclick="updateVisit()">עדכן זמן</button>
+        <button type="button">עדכן זמן</button>
     </form>
 
    
