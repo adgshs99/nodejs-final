@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="he">
+
+<head>
+    <meta charset="UTF-8">
+    <title>עדכון זמן ביקור</title>
+</head>
+
+<body>
+    <h1>עדכון זמן ביקור</h1>
+
+    <form>
+        <label for="pointSelect">בחר נקודה:</label>
+        <select id="pointSelect"></select>
+        <button type="button" onclick="updateVisit()">עדכן זמן</button>
+    </form>
+
+    <h2>ביקורים שנרשמו:</h2>
+    <ul id="visitsList"></ul>
+
+    <script>
+        async function loadpoints() {
+            const re = await fetch('/checkpoints');
+            const checkpoints = await re.json();
+            const select = document.getElementById('pointSelect');
+            select.innerHTML = '';
+            checkpoints.forEach(checkpoint => {
+                const option = document.createElement('option');
+                option.value = checkpoint.id;
+                option.text = checkpoint.name;
+                select.appendChild(option);
+            });
+        }
+
+   async function updateVisit() {
+            const pointId = document.getElementById('pointSelect').value;
+
+            await fetch('/visitUpdate', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ pointId })
+            });
+
+            loadVisits();
+        }
+  async function loadVisits() {
+            const re2 = await fetch('/visits');
+            const visits = await re2.json();
+            const list = document.getElementById('visitsList');
+            list.innerHTML = '';
+            visits.forEach(visit => {
+                const li = document.createElement('li');
+                li.textContent = `נקודה ${visit.pointId}, זמן: ${new Date(visit.time).toLocaleString()}`;
+                list.appendChild(li);
+            });
+        }
+loadpoints();
+loadVisits();
+
+   </script>
+</body>
+
+</html>
